@@ -9,7 +9,7 @@ comb_cols <- list()
 #### generating all possible combinations of event's names ####
 
   for (i in 1:length(event_cols)) {
-    if (i == length(event_cols))  ## zakombinaować coś z while
+    if (i == length(event_cols))  
       break
     comb_cols_names[[i]] <- t(combn(event_cols, i+1))
     comb_cols[[i]] <- t(combn(event_cols, i+1))

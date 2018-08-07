@@ -1,0 +1,17 @@
+Package: eventcounting2
+Type: Package
+Title: Counting events for unique combinations of action types
+Version: 0.1.0
+Author: Mateusz Staniak <Mateusz.Staniak@kruksa.pl>
+Maintainer: Mateusz Staniak <Mateusz.Staniak@kruksa.pl>
+Description: Counting events for unique combinations of action types.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 2.10)
+Imports: lubridate,
+    glue,
+    data.table,
+    dplyr
+Suggests: testthat
+RoxygenNote: 6.1.0

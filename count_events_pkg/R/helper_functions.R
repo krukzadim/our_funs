@@ -96,7 +96,7 @@ find_first_last <- function(to_count, grouping_variables, case_id_col, event_dat
   event_dates <- to_count[, .(first_event = min(.SD[[1]], na.rm = T),
                               last_event = max(.SD[[1]], na.rm = T)),
                           by = c(grouping_variables, case_id_col), 
-                          .SDcols = c(event_date_col, end_date_col)]
+                          .SDcols = event_date_col]
   make_wide(event_dates, grouping_variables, case_id_col)
 }
 

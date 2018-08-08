@@ -84,29 +84,6 @@ make_wide <- function(src_df, grouping_variables, case_id_col) {
 #' @param grouping_variables Character, names of columns to group by
 #' @param case_id_col Character, name of the column in which case IDs are stored
 #' @param event_date_col Character, name of the column that contains dates of events
-#'  
-#' @import data.table  
-#'  
-#' @return data frame
-#'
-#' @export
-#'
-
-find_first_last <- function(to_count, grouping_variables, case_id_col, event_date_col) {
-  event_dates <- to_count[, .(first_event = min(.SD[[1]], na.rm = T),
-                              last_event = max(.SD[[1]], na.rm = T)),
-                          by = c(grouping_variables, case_id_col), 
-                          .SDcols = event_date_col]
-  make_wide(event_dates, grouping_variables, case_id_col)
-}
-
-
-#' Find date of first and last occurence of the event
-#'
-#' @param to_count data frame
-#' @param grouping_variables Character, names of columns to group by
-#' @param case_id_col Character, name of the column in which case IDs are stored
-#' @param event_date_col Character, name of the column that contains dates of events
 #' @param end_date_col Character, name of the column that contains date zero
 #'  
 #' @import data.table  
@@ -162,13 +139,10 @@ find_counts <- function(to_count, grouping_variables, case_id_col) {
 
 single_grouping <- function(x, grouping_variables, case_id_col, event_date_col, end_date_col, intervals) {
   to_count <- x[, c(grouping_variables, case_id_col, event_date_col, end_date_col), with = F]
-  first_last <- find_first_last(to_count, grouping_variables, case_id_col, event_date_col)
   diffs <- find_diffs(to_count, grouping_variables, case_id_col, event_date_col, end_date_col)
 
   to_count <- add_indicator_cols(to_count, event_date_col, end_date_col, intervals)
   counts_in_intervals <- find_counts(to_count, grouping_variables, case_id_col)
 
-  result <- merge(first_last, diffs)
-  result <- merge(result, counts_in_intervals)
-  result
+  as.data.table::merge(counts_in_intervals, diffs)
 }

@@ -28,7 +28,7 @@ each y in interval will be calculated}
 grouping will be performed}
 }
 \value{
-list of data frames
+data frame
 }
 \description{
 Count events for all clients in the database in parallel

@@ -35,7 +35,7 @@ count_events_single <- function(x, case_id, case_id_col, event_date_col,
 #' @param groupings list of vectors of combinations of positions in event_codes_cols by which
 #'        grouping will be performed
 #'
-#' @return list of data frames
+#' @return data frame
 #'
 #' @export
 #'
@@ -85,7 +85,7 @@ count_events <- function(x, case_id_col = "spr_Id",
 #'
 #' @importFrom foreach %dopar%
 #'
-#' @return list of data frames
+#' @return data frame
 #'
 #' @export
 #'

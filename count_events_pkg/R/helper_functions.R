@@ -98,7 +98,8 @@ find_diffs <- function(to_count, grouping_variables, case_id_col, event_date_col
                               last_diff = as.numeric(lubridate::ceiling_date(.SD[[2]], "days") - lubridate::ceiling_date(max(.SD[[1]], na.rm = T), "days"))),
                           by = c(grouping_variables, case_id_col), 
                           .SDcols = c(event_date_col, end_date_col)]
-  make_wide(event_diffs, grouping_variables, case_id_col)
+  result <- make_wide(event_diffs, grouping_variables, case_id_col)
+  result[, dplyr::mutate_if(.SD, is.numeric, function(y) ifelse(is.na(y), -1, y))]
 }
 
 
@@ -118,7 +119,8 @@ find_counts <- function(to_count, grouping_variables, case_id_col) {
   to_summarise <- colnames(to_count)[!(colnames(to_count) %in% c(grouping_variables, case_id_col))]
   counts_in_intervals <- to_count[, lapply(.SD, sum, na.rm=TRUE), 
                                   by = c(grouping_variables, case_id_col), .SDcols = to_summarise]
-  make_wide(counts_in_intervals, grouping_variables, case_id_col)
+  result <- make_wide(counts_in_intervals, grouping_variables, case_id_col)
+  result[, dplyr::mutate_if(.SD, is.numeric, function(y) ifelse(is.na(y), 0, y))]
 }
 
 

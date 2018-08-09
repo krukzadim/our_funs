@@ -66,8 +66,7 @@ count_events <- function(x, case_id_col = "spr_Id",
   })
   
   tmp <- data.table::rbindlist(all_cases, fill = T, use.names = T)
-  tmp <- tmp[, dplyr::select_if(.SD, function(y) !all(is.na(y) | y == 0))]
-  tmp[, dplyr::mutate_if(.SD, is.numeric, function(y) ifelse(is.na(y), 0, y))]
+  tmp[, dplyr::select_if(.SD, function(y) !all(is.na(y) | y == 0))]
 }
 
 
@@ -117,6 +116,5 @@ count_events_parallel <- function(x, case_id_col = "spr_Id",
   
   tmp <- data.table::rbindlist(all_cases, fill = T, use.names = T)
   tmp[, dplyr::select_if(.SD, function(y) !all(is.na(y) | y == 0))]
-  tmp[, dplyr::mutate_if(.SD, is.numeric, function(y) ifelse(is.na(y), 0, y))]
 }
 

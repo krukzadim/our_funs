@@ -31,5 +31,6 @@ grouping will be performed}
 data frame
 }
 \description{
-Count events for all clients in the database in parallel
+This is parallelized version of count_events function. To use it properly, register a cluster using
+registerDoParallel before running it (and stop the cluster afterwards).
 }

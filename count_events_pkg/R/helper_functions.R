@@ -10,19 +10,35 @@
 check_conditions <- function(x, case_id_col, event_date_col,
                              end_date_col, event_codes_cols, intervals, groupings) {
   if((case_id_col %in% colnames(x)) &
-    (end_date_col %in% colnames(x)) &
-    (event_date_col %in% colnames(x)) &
-    (all(event_codes_cols %in% colnames(x))) &
-    (length(event_codes_cols) > 0) &
-    (length(intervals) > 0) &
-    (length(groupings) > 0) # &
-    # (lubridate::is.Date(x[, event_date_col]) | lubridate::is.POSIXt(x[, event_date_col])) &
-    # (lubridate::is.Date(x[, end_date_col]) | lubridate::is.POSIXt(x[, end_date_col]))
-   ) {
+     (end_date_col %in% colnames(x)) &
+     (event_date_col %in% colnames(x)) &
+     (all(event_codes_cols %in% colnames(x))) &
+     (length(event_codes_cols) > 0) &
+     (length(intervals) > 0) &
+     (length(groupings) > 0) # &
+     # (lubridate::is.Date(x[, event_date_col]) | lubridate::is.POSIXt(x[, event_date_col])) &
+     # (lubridate::is.Date(x[, end_date_col]) | lubridate::is.POSIXt(x[, end_date_col]))
+  ) {
     return(TRUE)
   } else {
     return(FALSE)
   }
+}
+
+
+#' Fill NAs that were casued by merging dfs of differing ncols
+#' 
+#' @param x data frame
+#' 
+#' @return data frame
+#' 
+#' @export
+#' 
+
+fill_na <- function(x) {
+  x <- dplyr::mutate_at(x, vars(contains("cnt")), function(y) ifelse(is.na(y), 0, y))
+  x <- dplyr::mutate_at(x, vars(contains("diff")), function(y) ifelse(is.na(y), -1, y))
+  x
 }
 
 
@@ -73,8 +89,12 @@ make_wide <- function(src_df, grouping_variables, case_id_col) {
   y$combined_names <- combined_names
   y <- y[!(is.na(y$combined_names)), ] 
   y <- unique(y)
-  y <- data.table::dcast(y, spr_Id ~ combined_names)
-  y[order(y[[case_id_col]])]
+  if(nrow(y) == 0) {
+    y[, ..case_id_col]
+  } else {
+    y <- data.table::dcast(y, as.formula(paste(c(case_id_col, "~", "combined_names"), collapse = " ")))
+    y[order(y[[case_id_col]])]
+  }
 }
 
 
@@ -142,9 +162,9 @@ find_counts <- function(to_count, grouping_variables, case_id_col) {
 single_grouping <- function(x, grouping_variables, case_id_col, event_date_col, end_date_col, intervals) {
   to_count <- x[, c(grouping_variables, case_id_col, event_date_col, end_date_col), with = F]
   diffs <- find_diffs(to_count, grouping_variables, case_id_col, event_date_col, end_date_col)
-
+  
   to_count <- add_indicator_cols(to_count, event_date_col, end_date_col, intervals)
   counts_in_intervals <- find_counts(to_count, grouping_variables, case_id_col)
-
-  as.data.table::merge(counts_in_intervals, diffs)
+  
+  merge(counts_in_intervals, diffs)
 }
